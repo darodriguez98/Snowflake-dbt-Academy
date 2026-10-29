@@ -1,13 +1,13 @@
 version: 2
 
-source:
+sources:
   - name: raw_data
-    database: RAW
-    schema: PUBLIC
+    database: raw
+    schema: public
     tables:
-      - name: CUSTOMERS
-      - name: ORDERS
-      - name: PRODUCTS
-      - name: LINE_ITEMS
-      - name: PAYMENTS
-      - name: WEB_EVENTS
+      - name: customers
+      - name: orders
+      - name: products
+      - name: line_items
+      - name: payments
+      - name: web_events

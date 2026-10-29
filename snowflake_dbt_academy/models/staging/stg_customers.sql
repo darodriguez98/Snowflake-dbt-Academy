@@ -12,7 +12,7 @@
 WITH 
 source_data as (
     SELECT *
-    FROM {{ source('raw_data', 'CUSTOMERS') }} c
+    FROM {{ source('raw_data', 'customers') }} c
 ),
 cleaned_data as(
     SELECT
