@@ -1,0 +1,13 @@
+version: 2
+
+source:
+  - name: raw_data
+    database: RAW
+    schema: PUBLIC
+    tables:
+      - name: CUSTOMERS
+      - name: ORDERS
+      - name: PRODUCTS
+      - name: LINE_ITEMS
+      - name: PAYMENTS
+      - name: WEB_EVENTS
