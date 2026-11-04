@@ -1,14 +1,3 @@
--- ============================================================
--- LEGACY CODE: Monthly Business Performance Report
--- Purpose: Generates a monthly summary of orders, revenue,
---          customer segments, and product performance.
--- Owner: unknown (inherited)
--- Last modified: 2021-03-14
--- WARNING: Do not modify without approval from the data team.
--- ============================================================
-
--- Step 1: Clean up raw customers (some have duplicate emails, nulls, bad dates)
-
 WITH 
 source_data as (
     SELECT *
@@ -36,7 +25,10 @@ cleaned_data as(
     WHERE c.created_at IS NOT NULL
     AND c.email IS NOT NULL
     AND c.email LIKE '%@%'
-    QUALIFY ROW_NUMBER() OVER (PARTITION BY LOWER(TRIM(c.email)) ORDER BY c.created_at DESC) = 1
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY LOWER(TRIM(c.email)) 
+        ORDER BY c.created_at DESC
+    ) = 1
 )
  
 SELECT * 
