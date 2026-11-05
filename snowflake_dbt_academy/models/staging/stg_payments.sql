@@ -5,13 +5,13 @@ WITH source_data AS (
 
 renamed AS (
     SELECT
-        payment_id::INTEGER AS payment_id,,
+        payment_id::INTEGER AS payment_id,
         order_id::INTEGER AS order_id,
         CASE
-            WHEN p.payment_method IN ('credit_card', 'cc', 'visa', 'mastercard', 'amex') THEN 'credit_card'
-            WHEN p.payment_method IN ('bank_transfer', 'wire', 'ach') THEN 'bank_transfer'
-            WHEN p.payment_method IN ('paypal', 'venmo') THEN 'digital_wallet'
-            WHEN p.payment_method = 'gift_card' THEN 'gift_card'
+            WHEN payment_method IN ('credit_card', 'cc', 'visa', 'mastercard', 'amex') THEN 'credit_card'
+            WHEN payment_method IN ('bank_transfer', 'wire', 'ach') THEN 'bank_transfer'
+            WHEN payment_method IN ('paypal', 'venmo') THEN 'digital_wallet'
+            WHEN payment_method = 'gift_card' THEN 'gift_card'
             ELSE 'other'
         END AS payment_method_clean,
         -- ENFORCE PRECISE FINANCIAL DECIMAL PRECISION

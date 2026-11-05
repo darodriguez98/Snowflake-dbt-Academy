@@ -3,31 +3,31 @@ source_data as (
     SELECT *
     FROM {{ source('raw_data', 'customers') }} c
 ),
+
+country_map as (
+    SELECT * FROM {{ ref('country_mapping') }}
+),
+
 cleaned_data as(
     SELECT
-    c.customer_id,
-    UPPER(TRIM(c.first_name)) AS first_name,
-    UPPER(TRIM(c.last_name)) AS last_name,
-    LOWER(TRIM(c.email)) AS email,
-    COALESCE(c.phone, 'N/A') AS phone,
-    c.created_at,
-    CASE
-        WHEN c.country IS NULL OR c.country = '' THEN 'UNKNOWN'
-        WHEN c.country IN ('US', 'USA', 'United States', 'united states') THEN 'US'
-        WHEN c.country IN ('UK', 'GB', 'United Kingdom', 'united kingdom', 'Great Britain') THEN 'UK'
-        WHEN c.country IN ('CA', 'Canada', 'canada') THEN 'CA'
-        WHEN c.country IN ('DE', 'Germany', 'germany') THEN 'DE'
-        WHEN c.country IN ('FR', 'France', 'france') THEN 'FR'
-        ELSE UPPER(c.country)
-    END AS country_standardized,
+    customer_id::integer AS customer_id,
+    UPPER(TRIM(first_name)) AS first_name,
+    UPPER(TRIM(last_name)) AS last_name,
+    LOWER(TRIM(email)) AS email,
+    COALESCE(TRIM(phone), 'N/A') AS phone,
+    UPPER(TRIM(country)) AS country_code,
+    created_at::timestamp_ntz AS created_at,
+    coalesce(cm.country_code, trim(UPPER(s.country))) AS country_standard,
     --ROW_NUMBER() OVER (PARTITION BY LOWER(TRIM(c.email)) ORDER BY c.created_at DESC) AS rn
-    FROM source_data c
-    WHERE c.created_at IS NOT NULL
-    AND c.email IS NOT NULL
-    AND c.email LIKE '%@%'
+    FROM source_data s
+    left join country_map cm
+        on trim(UPPER(s.country)) = upper(cm.country_raw)
+    WHERE created_at IS NOT NULL
+    AND email IS NOT NULL
+    AND email LIKE '%@%'
     QUALIFY ROW_NUMBER() OVER (
-        PARTITION BY LOWER(TRIM(c.email)) 
-        ORDER BY c.created_at DESC
+        PARTITION BY LOWER(TRIM(email)) 
+        ORDER BY created_at DESC
     ) = 1
 )
  
